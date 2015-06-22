@@ -8,10 +8,12 @@ module objects {
         constructor(imageString: string, x: number, y: number, centered: boolean) {
             super(textureAtlas, imageString);
 
-            if (centered) {
-                this.regX = this.getBounds().width * 0.5;
-                this.regY = this.getBounds().height * 0.5;
-            }
+          
+                this.regX = this.getBounds().width * 0.4;
+                this.regY = this.getBounds().height * 0.4;
+                this.scaleX = 0.6;
+                this.scaleY = 0.6;
+           
 
             this.x = x;
             this.y = y;

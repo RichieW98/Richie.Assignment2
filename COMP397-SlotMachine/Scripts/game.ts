@@ -16,47 +16,79 @@ var canvas = document.getElementById("canvas");
 var stage: createjs.Stage;
 var stats: Stats;
 
+// Game Objects 
+var game: createjs.Container;
+var background: createjs.Bitmap;
+var spinButton: objects.Button;
+var resetButton: objects.Button;
+var tiles: createjs.Bitmap[] = [];
+var tileContainers: createjs.Container[] = [];
+
+// Game Variables
+var playerMoney = 1000;
+var winnings = 0;
+var jackpot = 5000;
+var turn = 0;
+var playerBet = 0;
+var winNumber = 0;
+var lossNumber = 0;
+var spinResult;
+var fruits = "";
+var winRatio = 0;
+
+
+/* Tally Variables */
+var grapes = 0;
+var lemons = 0;
+var oranges = 0;
+var cherries = 0;
+var bars = 0;
+var bells = 0;
+var sevens = 0;
+var blanks = 0;
+
 var assets: createjs.LoadQueue;
 var manifest = [
-    { id: "background", src: "assets/images/slotMachine.png" },
-    { id: "clicked", src: "assets/audio/clicked.wav" }
+    { id: "background", src: "assets/images/bgPic.png" },
+    { id: "clicked", src: "assets/audio/clicked.wav" },
+    { id: "spinclick", src: "assets/audio/drop22.au" }
 ];
 
 var atlas = {
     "images": ["assets/images/atlas.png"],
     "frames": [
-
-        [2, 2, 64, 64],
-        [2, 68, 64, 64],
-        [2, 134, 64, 64],
-        [200, 2, 49, 49],
-        [200, 53, 49, 49],
-        [200, 104, 49, 49],
-        [68, 2, 64, 64],
-        [134, 2, 64, 64],
-        [68, 68, 64, 64],
-        [134, 68, 64, 64],
-        [134, 134, 49, 49],
-        [68, 134, 64, 64],
-        [185, 155, 49, 49]
+        [2, 2, 139, 141],
+        [2, 145, 94, 49],
+        [98, 145, 94, 49],
+        [143, 2, 139, 141],
+        [194, 145, 94, 49],
+        [284, 2, 139, 141],
+        [290, 145, 94, 49],
+        [386, 145, 94, 49],
+        [425, 2, 139, 141],
+        [482, 145, 94, 49],
+        [566, 2, 139, 141],
+        [707, 2, 139, 141],
+        [848, 2, 139, 139]
     ],
-    "animations": {
 
-        "bananaSymbol": [0],
-        "barSymbol": [1],
-        "bellSymbol": [2],
-        "betMaxButton": [3],
-        "betOneButton": [4],
-        "betTenButton": [5],
-        "blankSymbol": [6],
-        "cherrySymbol": [7],
-        "grapesSymbol": [8],
-        "orangeSymbol": [9],
-        "resetButton": [10],
-        "sevenSymbol": [11],
-        "spinButton": [12]
-    }
+    "animations": {
+        "seven": [0],
+        "bet1": [1],
+        "bet100": [2],
+        "bar": [3],
+        "bet200": [4],
+        "blank": [5],
+        "bet50": [6],
+        "reset": [7],
+        "cherry": [8],
+        "spin": [9],
+        "lemon": [10],
+        "orange": [11],
+        "bell": [12]
+    },
 };
+
 
 
 // Game Variables
@@ -66,7 +98,7 @@ var spinButton: objects.Button;
 
 /* Tally Variables */
 var grapes = 0;
-var bananas = 0;
+var lemons = 0;
 var oranges = 0;
 var cherries = 0;
 var bars = 0;
@@ -82,7 +114,7 @@ function preload() {
     assets = new createjs.LoadQueue();
     assets.installPlugin(createjs.Sound);
     // event listener triggers when assets are completely loaded
-    assets.on("complete", init, this); 
+    assets.on("complete", init, this);
     assets.loadManifest(manifest);
 
     // Load Texture Atlas
@@ -151,31 +183,31 @@ function Reels() {
                 blanks++;
                 break;
             case checkRange(outCome[spin], 28, 37): // 15.4% probability
-                betLine[spin] = "Grapes";
-                grapes++;
+                betLine[spin] = "lemon";
+                lemons++;
                 break;
             case checkRange(outCome[spin], 38, 46): // 13.8% probability
-                betLine[spin] = "Banana";
-                bananas++;
+                betLine[spin] = "bar";
+                bars++;
                 break;
             case checkRange(outCome[spin], 47, 54): // 12.3% probability
-                betLine[spin] = "Orange";
+                betLine[spin] = "orange";
                 oranges++;
                 break;
             case checkRange(outCome[spin], 55, 59): //  7.7% probability
-                betLine[spin] = "Cherry";
+                betLine[spin] = "cherry";
                 cherries++;
                 break;
             case checkRange(outCome[spin], 60, 62): //  4.6% probability
-                betLine[spin] = "Bar";
+                betLine[spin] = "bar";
                 bars++;
                 break;
             case checkRange(outCome[spin], 63, 64): //  3.1% probability
-                betLine[spin] = "Bell";
+                betLine[spin] = "bell";
                 bells++;
                 break;
             case checkRange(outCome[spin], 65, 65): //  1.5% probability
-                betLine[spin] = "Seven";
+                betLine[spin] = "seven";
                 sevens++;
                 break;
         }
@@ -183,8 +215,43 @@ function Reels() {
     return betLine;
 }
 
+/* Utility function to reset all fruit tallies */
+function resetFruitTally() {
+    grapes = 0;
+    lemons = 0;
+    oranges = 0;
+    cherries = 0;
+    bars = 0;
+    bells = 0;
+    sevens = 0;
+    blanks = 0;
+}
+
+function spinReels() {
+    // Add Spin Reels code here
+    spinResult = Reels();
+    fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
+    console.log(fruits);
 
 
+    for (var tile = 0; tile < 3; tile++) {
+        if (turn > 0) {
+            game.removeChild(tiles[tile]);
+        }
+
+        tiles[tile] = new createjs.Bitmap("assets/images/" + spinResult[tile] + ".png");
+        tiles[tile].scaleX = 0.5;
+        tiles[tile].scaleY = 0.5;
+       
+        tiles[tile].x = 80 + (120 * tile);
+        tiles[tile].y = 398;
+
+        game.addChild(tiles[tile]);
+        console.log(game.getNumChildren());
+    }
+
+
+}
 
 // Callback function that allows me to respond to button click events
 function spinButtonClicked(event: createjs.MouseEvent) {
@@ -199,16 +266,106 @@ function spinButtonClicked(event: createjs.MouseEvent) {
 // Callback functions that change the alpha transparency of the button
 
 
+function determineWinnings() {
+    if (blanks == 0) {
+        if (grapes == 3) {
+            winnings = playerBet * 10;
+        }
+        else if (lemons == 3) {
+            winnings = playerBet * 20;
+        }
+        else if (oranges == 3) {
+            winnings = playerBet * 30;
+        }
+        else if (cherries == 3) {
+            winnings = playerBet * 40;
+        }
+        else if (bars == 3) {
+            winnings = playerBet * 50;
+        }
+        else if (bells == 3) {
+            winnings = playerBet * 75;
+        }
+        else if (sevens == 3) {
+            winnings = playerBet * 100;
+        }
+        else if (grapes == 2) {
+            winnings = playerBet * 2;
+        }
+        else if (lemons == 2) {
+            winnings = playerBet * 2;
+        }
+        else if (oranges == 2) {
+            winnings = playerBet * 3;
+        }
+        else if (cherries == 2) {
+            winnings = playerBet * 4;
+        }
+        else if (bars == 2) {
+            winnings = playerBet * 5;
+        }
+        else if (bells == 2) {
+            winnings = playerBet * 10;
+        }
+        else if (sevens == 2) {
+            winnings = playerBet * 20;
+        }
+        else {
+            winnings = playerBet * 1;
+        }
+
+        if (sevens == 1) {
+            winnings = playerBet * 5;
+        }
+        winNumber++;
+        // showWinMessage();
+    }
+    else {
+        lossNumber++;
+        //  showLossMessage();
+    }
+
+}
+
+
+function createUI(): void {
+    // instantiate my background
+    background = new createjs.Bitmap(assets.getResult("background"));
+    background.x = 3;
+    background.y = 3;
+    background.scaleX = 0.55;
+    background.scaleY = 0.55;
+    game.addChild(background);
+
+
+    // Spin Button
+    spinButton = new objects.Button("spin", 378, 570, false);
+    game.addChild(spinButton);
+
+    spinButton.on("click", spinReels);
+
+
+    // Reset Button
+    resetButton = new objects.Button("reset", 88, 570, false);
+    game.addChild(resetButton);
+
+    resetButton.on("click", function () {
+        console.log("reset clicked");
+    });
+}
+
 
 // Our Main Game Function
 function main() {
-    // add in slot machine graphic
-    background = new createjs.Bitmap(assets.getResult("background"));
-    stage.addChild(background);
+    // instantiate my game container
+    game = new createjs.Container();
+    game.x = 20;
+    game.y = 20;
 
-    // add spinButton sprite
-    spinButton = new objects.Button("spinButton", 225, 334, false);
-    stage.addChild(spinButton);
-    spinButton.on("click", spinButtonClicked, this);
+    // Create Slotmachine User Interface
+    createUI();
+
+
+    stage.addChild(game);
 
 }
