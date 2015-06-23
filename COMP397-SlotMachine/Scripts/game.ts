@@ -20,6 +20,11 @@ var stats: Stats;
 var game: createjs.Container;
 var background: createjs.Bitmap;
 var spinButton: objects.Button;
+var bet1btn: objects.Button;
+var bet50btn: objects.Button;
+var bet100btn: objects.Button;
+var bet200btn: objects.Button;
+var bet;
 var resetButton: objects.Button;
 var tiles: createjs.Bitmap[] = [];
 var tileContainers: createjs.Container[] = [];
@@ -35,6 +40,10 @@ var lossNumber = 0;
 var spinResult;
 var fruits = "";
 var winRatio = 0;
+
+var betlabel: createjs.Text;
+var winninglabel: createjs.Text;
+var creditlabel: createjs.Text;
 
 
 /* Tally Variables */
@@ -229,6 +238,7 @@ function resetFruitTally() {
 
 function spinReels() {
     // Add Spin Reels code here
+    
     spinResult = Reels();
     fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
     console.log(fruits);
@@ -327,6 +337,36 @@ function determineWinnings() {
 
 }
 
+//bet
+function betbtn1() {
+    game.removeChild(betlabel);
+    betbtn(1);
+}
+
+function betbtn50() {
+    game.removeChild(betlabel);
+    betbtn(50);
+}
+
+function betbtn100() {
+    game.removeChild(betlabel);
+    betbtn(100);
+}
+
+function betbtn200() {
+    game.removeChild(betlabel);
+    betbtn(200);
+}
+
+function betbtn(betvalue) {
+  
+    betlabel = new createjs.Text(betvalue, "40px Consolas", "#000000");
+    betlabel.regX = betlabel.getMeasuredWidth() * 0.5;
+    betlabel.regY = betlabel.getMeasuredHeight() * 0.5;
+    betlabel.x = 260;
+    betlabel.y = 290;
+    game.addChild(betlabel);
+}
 
 function createUI(): void {
     // instantiate my background
@@ -344,9 +384,33 @@ function createUI(): void {
 
     spinButton.on("click", spinReels);
 
+    // Spin Button
+    bet1btn = new objects.Button("bet1", 318, 570, false);
+    game.addChild(bet1btn);
+
+    bet1btn.on("click", betbtn1);
+
+    // Spin Button
+    bet50btn = new objects.Button("bet50", 258, 570, false);
+    game.addChild(bet50btn);
+
+    bet50btn.on("click", betbtn50);
+
+    // Spin Button
+    bet100btn = new objects.Button("bet100", 198, 570, false);
+    game.addChild(bet100btn);
+
+    bet100btn.on("click", betbtn100);
+
+    // Spin Button
+    bet200btn = new objects.Button("bet200", 138, 570, false);
+    game.addChild(bet200btn);
+
+    bet200btn.on("click", betbtn200);
+
 
     // Reset Button
-    resetButton = new objects.Button("reset", 88, 570, false);
+    resetButton = new objects.Button("reset", 78, 570, false);
     game.addChild(resetButton);
 
     resetButton.on("click", function () {

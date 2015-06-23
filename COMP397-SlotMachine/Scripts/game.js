@@ -14,6 +14,11 @@ var stats;
 var game;
 var background;
 var spinButton;
+var bet1btn;
+var bet50btn;
+var bet100btn;
+var bet200btn;
+var bet;
 var resetButton;
 var tiles = [];
 var tileContainers = [];
@@ -28,6 +33,9 @@ var lossNumber = 0;
 var spinResult;
 var fruits = "";
 var winRatio = 0;
+var betlabel;
+var winninglabel;
+var creditlabel;
 /* Tally Variables */
 var grapes = 0;
 var lemons = 0;
@@ -275,6 +283,31 @@ function determineWinnings() {
         lossNumber++;
     }
 }
+//bet
+function betbtn1() {
+    game.removeChild(betlabel);
+    betbtn(1);
+}
+function betbtn50() {
+    game.removeChild(betlabel);
+    betbtn(50);
+}
+function betbtn100() {
+    game.removeChild(betlabel);
+    betbtn(100);
+}
+function betbtn200() {
+    game.removeChild(betlabel);
+    betbtn(200);
+}
+function betbtn(betvalue) {
+    betlabel = new createjs.Text(betvalue, "40px Consolas", "#000000");
+    betlabel.regX = betlabel.getMeasuredWidth() * 0.5;
+    betlabel.regY = betlabel.getMeasuredHeight() * 0.5;
+    betlabel.x = 260;
+    betlabel.y = 290;
+    game.addChild(betlabel);
+}
 function createUI() {
     // instantiate my background
     background = new createjs.Bitmap(assets.getResult("background"));
@@ -287,8 +320,24 @@ function createUI() {
     spinButton = new objects.Button("spin", 378, 570, false);
     game.addChild(spinButton);
     spinButton.on("click", spinReels);
+    // Spin Button
+    bet1btn = new objects.Button("bet1", 318, 570, false);
+    game.addChild(bet1btn);
+    bet1btn.on("click", betbtn1);
+    // Spin Button
+    bet50btn = new objects.Button("bet50", 258, 570, false);
+    game.addChild(bet50btn);
+    bet50btn.on("click", betbtn50);
+    // Spin Button
+    bet100btn = new objects.Button("bet100", 198, 570, false);
+    game.addChild(bet100btn);
+    bet100btn.on("click", betbtn100);
+    // Spin Button
+    bet200btn = new objects.Button("bet200", 138, 570, false);
+    game.addChild(bet200btn);
+    bet200btn.on("click", betbtn200);
     // Reset Button
-    resetButton = new objects.Button("reset", 88, 570, false);
+    resetButton = new objects.Button("reset", 78, 570, false);
     game.addChild(resetButton);
     resetButton.on("click", function () {
         console.log("reset clicked");
