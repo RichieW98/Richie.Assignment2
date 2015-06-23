@@ -34,8 +34,11 @@ var spinResult;
 var fruits = "";
 var winRatio = 0;
 var betlabel;
+var betbg;
 var winninglabel;
+var winningbg;
 var creditlabel;
+var creditbg;
 /* Tally Variables */
 var grapes = 0;
 var lemons = 0;
@@ -48,6 +51,7 @@ var blanks = 0;
 var assets;
 var manifest = [
     { id: "background", src: "assets/images/bgPic.png" },
+    { id: "ptsbg", src: "assets/images/ptsbg.png" },
     { id: "clicked", src: "assets/audio/clicked.wav" },
     { id: "spinclick", src: "assets/audio/drop22.au" }
 ];
@@ -203,6 +207,7 @@ function resetFruitTally() {
 }
 function spinReels() {
     // Add Spin Reels code here
+    console.log(playerBet);
     spinResult = Reels();
     fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
     console.log(fruits);
@@ -216,7 +221,6 @@ function spinReels() {
         tiles[tile].x = 80 + (120 * tile);
         tiles[tile].y = 398;
         game.addChild(tiles[tile]);
-        console.log(game.getNumChildren());
     }
 }
 // Callback function that allows me to respond to button click events
@@ -231,51 +235,67 @@ function determineWinnings() {
     if (blanks == 0) {
         if (grapes == 3) {
             winnings = playerBet * 10;
+            console.log(winnings);
         }
         else if (lemons == 3) {
             winnings = playerBet * 20;
+            console.log(winnings);
         }
         else if (oranges == 3) {
             winnings = playerBet * 30;
+            console.log(winnings);
         }
         else if (cherries == 3) {
             winnings = playerBet * 40;
+            console.log(winnings);
         }
         else if (bars == 3) {
             winnings = playerBet * 50;
+            console.log(winnings);
         }
         else if (bells == 3) {
             winnings = playerBet * 75;
+            console.log(winnings);
         }
         else if (sevens == 3) {
             winnings = playerBet * 100;
+            console.log(winnings);
         }
         else if (grapes == 2) {
             winnings = playerBet * 2;
+            console.log(winnings);
         }
         else if (lemons == 2) {
             winnings = playerBet * 2;
+            console.log(winnings);
         }
         else if (oranges == 2) {
             winnings = playerBet * 3;
+            console.log(winnings);
         }
         else if (cherries == 2) {
             winnings = playerBet * 4;
+            console.log(winnings);
         }
         else if (bars == 2) {
             winnings = playerBet * 5;
+            console.log(winnings);
         }
         else if (bells == 2) {
             winnings = playerBet * 10;
+            console.log(winnings);
         }
         else if (sevens == 2) {
             winnings = playerBet * 20;
+            console.log(winnings);
         }
         else {
             winnings = playerBet * 1;
+            console.log(winnings);
         }
         if (sevens == 1) {
             winnings = playerBet * 5;
+            console.log(winnings);
         }
         winNumber++;
     }
@@ -286,27 +306,39 @@ function determineWinnings() {
 //bet
 function betbtn1() {
     game.removeChild(betlabel);
+    playerBet = 1;
     betbtn(1);
 }
 function betbtn50() {
     game.removeChild(betlabel);
+    playerBet = 50;
     betbtn(50);
 }
 function betbtn100() {
     game.removeChild(betlabel);
+    playerBet = 100;
     betbtn(100);
 }
 function betbtn200() {
     game.removeChild(betlabel);
+    playerBet = 200;
     betbtn(200);
 }
 function betbtn(betvalue) {
-    betlabel = new createjs.Text(betvalue, "40px Consolas", "#000000");
+    betlabel = new createjs.Text(betvalue, "25px Consolas", "#FF0000");
     betlabel.regX = betlabel.getMeasuredWidth() * 0.5;
     betlabel.regY = betlabel.getMeasuredHeight() * 0.5;
-    betlabel.x = 260;
-    betlabel.y = 290;
+    betlabel.x = 240;
+    betlabel.y = 315;
     game.addChild(betlabel);
+}
+function winbtn(winvalue) {
+    winninglabel = new createjs.Text(winvalue, "25px Consolas", "#FF0000");
+    winninglabel.regX = betlabel.getMeasuredWidth() * 0.5;
+    winninglabel.regY = betlabel.getMeasuredHeight() * 0.5;
+    winninglabel.x = 310;
+    winninglabel.y = 315;
+    game.addChild(winninglabel);
 }
 function createUI() {
     // instantiate my background
@@ -316,6 +348,27 @@ function createUI() {
     background.scaleX = 0.55;
     background.scaleY = 0.55;
     game.addChild(background);
+    //bet background
+    betbg = new createjs.Bitmap(assets.getResult("ptsbg"));
+    betbg.scaleX = 0.55;
+    betbg.scaleY = 0.55;
+    betbg.x = 190;
+    betbg.y = 310;
+    game.addChild(betbg);
+    //credit background
+    creditbg = new createjs.Bitmap(assets.getResult("ptsbg"));
+    creditbg.scaleX = 0.55;
+    creditbg.scaleY = 0.55;
+    creditbg.x = 70;
+    creditbg.y = 310;
+    game.addChild(creditbg);
+    //winnning background
+    winningbg = new createjs.Bitmap(assets.getResult("ptsbg"));
+    winningbg.scaleX = 0.55;
+    winningbg.scaleY = 0.55;
+    winningbg.x = 310;
+    winningbg.y = 310;
+    game.addChild(winningbg);
     // Spin Button
     spinButton = new objects.Button("spin", 378, 570, false);
     game.addChild(spinButton);

@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\audio\drop22.au" />
+    <Content Include="assets\images\Ptsbg.png" />
     <Content Include="assets\images\seven.png" />
     <Content Include="assets\images\atlas.png" />
     <Content Include="assets\images\bananaSymbol.png" />
