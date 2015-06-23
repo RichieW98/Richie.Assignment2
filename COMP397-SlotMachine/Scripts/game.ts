@@ -30,7 +30,7 @@ var tiles: createjs.Bitmap[] = [];
 var tileContainers: createjs.Container[] = [];
 
 // Game Variables
-var playerMoney = 1000;
+var playerMoney = 4999;
 var winnings = 0;
 var jackpot = 5000;
 var turn = 0;
@@ -242,6 +242,19 @@ function resetFruitTally() {
 
 function spinReels() {
     // Add Spin Reels code here
+    if (playerBet == 1)
+        playerMoney = playerMoney - 1;
+        
+    else if (playerBet == 50)
+        playerMoney = playerMoney - 50;
+
+    else if (playerBet == 100)
+        playerMoney = playerMoney - 100;
+
+    else if (playerBet == 200)
+        playerMoney = playerMoney - 200;
+
+
     console.log(playerBet);
     spinResult = Reels();
     fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
@@ -256,7 +269,7 @@ function spinReels() {
         tiles[tile] = new createjs.Bitmap("assets/images/" + spinResult[tile] + ".png");
         tiles[tile].scaleX = 0.5;
         tiles[tile].scaleY = 0.5;
-       
+
         tiles[tile].x = 80 + (120 * tile);
         tiles[tile].y = 398;
 
@@ -264,7 +277,12 @@ function spinReels() {
         //console.log(game.getNumChildren());
     }
 
-
+    determineWinnings();
+    resetFruitTally();
+    playerBet = 0;
+    game.removeChild(betlabel);
+    betbtn(0);
+    jack();
 }
 
 // Callback function that allows me to respond to button click events
@@ -281,71 +299,97 @@ function spinButtonClicked(event: createjs.MouseEvent) {
 
 
 function determineWinnings() {
+    console.log("winning determining... blanks:" + blanks);
+    game.removeChild(creditlabel);
+    game.removeChild(winninglabel);
     if (blanks == 0) {
         if (grapes == 3) {
             winnings = playerBet * 10;
             console.log(winnings);
+            winbtn(winnings);
+            playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (lemons == 3) {
             winnings = playerBet * 20;
             console.log(winnings);
+            winbtn(winnings);
+            playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (oranges == 3) {
             winnings = playerBet * 30;
             console.log(winnings);
+            playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (cherries == 3) {
             winnings = playerBet * 40;
             console.log(winnings);
+            winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (bars == 3) {
             winnings = playerBet * 50;
             console.log(winnings);
+            winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (bells == 3) {
             winnings = playerBet * 75;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (sevens == 3) {
             winnings = playerBet * 100;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (grapes == 2) {
             winnings = playerBet * 2;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (lemons == 2) {
             winnings = playerBet * 2;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (oranges == 2) {
             winnings = playerBet * 3;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (cherries == 2) {
             winnings = playerBet * 4;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (bars == 2) {
             winnings = playerBet * 5;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (bells == 2) {
             winnings = playerBet * 10;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else if (sevens == 2) {
             winnings = playerBet * 20;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         else {
             winnings = playerBet * 1;
-            console.log(winnings);
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
 
         if (sevens == 1) {
-            winnings = playerBet * 5;
-            console.log(winnings);
+            winnings = playerBet * 1;
+            console.log(winnings); winbtn(winnings); playerMoney = playerMoney + winnings;
+            creditbtn(playerMoney);
         }
         winNumber++;
         // showWinMessage();
@@ -353,56 +397,110 @@ function determineWinnings() {
     else {
         lossNumber++;
         //  showLossMessage();
+        winnings = 0;
+        winbtn(0);
+        creditbtn(playerMoney);
     }
 
 }
 
 //bet
 function betbtn1() {
+    
     game.removeChild(betlabel);
+    game.removeChild(creditlabel);
     playerBet = 1;
     betbtn(1);
+    creditbtn(playerMoney - 1);
+    creditchk();
 }
 
 function betbtn50() {
+ 
     game.removeChild(betlabel);
+    game.removeChild(creditlabel);
     playerBet = 50;
     betbtn(50);
+    creditbtn(playerMoney - 50);
+    creditchk();
 }
 
 function betbtn100() {
+    
     game.removeChild(betlabel);
+    game.removeChild(creditlabel);
     playerBet = 100;
     betbtn(100);
+    creditbtn(playerMoney - 100);
+    creditchk();
 }
 
 function betbtn200() {
+   
     game.removeChild(betlabel);
+    game.removeChild(creditlabel);
     playerBet = 200;
     betbtn(200);
+    creditbtn(playerMoney - 200);
+    creditchk();
 }
 
 function betbtn(betvalue) {
-  
+
     betlabel = new createjs.Text(betvalue, "25px Consolas", "#FF0000");
-  
+
     betlabel.regX = betlabel.getMeasuredWidth() * 0.5;
     betlabel.regY = betlabel.getMeasuredHeight() * 0.5;
     betlabel.x = 240;
     betlabel.y = 315;
 
     game.addChild(betlabel);
-  
+
+
 }
 
 function winbtn(winvalue) {
     winninglabel = new createjs.Text(winvalue, "25px Consolas", "#FF0000");
-    winninglabel.regX = betlabel.getMeasuredWidth() * 0.5;
-    winninglabel.regY = betlabel.getMeasuredHeight() * 0.5;
-    winninglabel.x = 310;
+    winninglabel.regX = winninglabel.getMeasuredWidth() * 0.5;
+    winninglabel.regY = winninglabel.getMeasuredHeight() * 0.5;
+    winninglabel.x = 365;
     winninglabel.y = 315;
 
     game.addChild(winninglabel);
+}
+
+function creditbtn(winvalue) {
+    creditlabel = new createjs.Text(winvalue, "25px Consolas", "#FF0000");
+    creditlabel.regX = creditlabel.getMeasuredWidth() * 0.5;
+    creditlabel.regY = creditlabel.getMeasuredHeight() * 0.5;
+    creditlabel.x = 110;
+    creditlabel.y = 315;
+
+    game.addChild(creditlabel);
+}
+
+//reset
+function reset() {
+    game.removeChild(creditlabel);
+    playerMoney = 1000;
+    creditbtn(playerMoney);
+}
+
+//checkmoney
+function creditchk() {
+    if (playerMoney - playerBet < 0) {
+        alert("you dont have enough money!Please reset");
+        game.removeChild(betlabel);
+        betbtn(0);
+        game.removeChild(creditlabel);
+        creditbtn(playerMoney);
+    }
+}
+
+//jackpot
+function jack() {
+    if (playerMoney == 5000)
+        alert("you got the jackpot!!!!~~");
 }
 
 function createUI(): void {
@@ -438,32 +536,40 @@ function createUI(): void {
     winningbg.x = 310;
     winningbg.y = 310;
     game.addChild(winningbg);
+
     
+    //initialize label
+    creditbtn(playerMoney);
+    betbtn(0);
+    winbtn(0);
+
+
+
     // Spin Button
     spinButton = new objects.Button("spin", 378, 570, false);
     game.addChild(spinButton);
 
     spinButton.on("click", spinReels);
 
-    // Spin Button
+    // bet Button
     bet1btn = new objects.Button("bet1", 318, 570, false);
     game.addChild(bet1btn);
 
     bet1btn.on("click", betbtn1);
 
-    // Spin Button
+    // bet Button
     bet50btn = new objects.Button("bet50", 258, 570, false);
     game.addChild(bet50btn);
 
     bet50btn.on("click", betbtn50);
 
-    // Spin Button
+    // bet Button
     bet100btn = new objects.Button("bet100", 198, 570, false);
     game.addChild(bet100btn);
 
     bet100btn.on("click", betbtn100);
 
-    // Spin Button
+    // bet Button
     bet200btn = new objects.Button("bet200", 138, 570, false);
     game.addChild(bet200btn);
 
@@ -474,12 +580,10 @@ function createUI(): void {
     resetButton = new objects.Button("reset", 78, 570, false);
     game.addChild(resetButton);
 
-    resetButton.on("click", function () {
-        console.log("reset clicked");
-    });
+    resetButton.on("click", reset);
 }
 
-
+//
 // Our Main Game Function
 function main() {
     // instantiate my game container
